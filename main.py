@@ -1,10 +1,14 @@
+import asyncio
 import os
+import threading
 import discord
 from dotenv import load_dotenv
+from receiver import start_receiver
 
 load_dotenv()
 
 token = os.getenv('TOKEN')
+channel_id = int(os.getenv('CHANNEL_ID'))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -15,12 +19,20 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print(f'We have logged in as {client.user}')
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+    def receiver_callback(data):
+        channel = client.get_channel(channel_id)
+        if channel:
+            asyncio.run_coroutine_threadsafe(
+                channel.send(f'Received data: {data['message']}'),
+                client.loop
+            )
+    
+    receiver_thread = threading.Thread(
+        target=start_receiver,
+        args=(receiver_callback,),
+        daemon=True
+    )
 
-    if message.content.startswith('!hello'):
-        await message.channel.send('Hello!')
+    receiver_thread.start()
 
 client.run(token)
