@@ -2,6 +2,7 @@ import asyncio
 import os
 import threading
 import discord
+import datetime
 from dotenv import load_dotenv
 from receiver import start_receiver
 
@@ -21,9 +22,27 @@ async def on_ready():
 
     def receiver_callback(data):
         channel = client.get_channel(channel_id)
+        gameStatus = 'Playing'
+        accentColor = discord.Color.green()
+        if data['game_state'] == 'Playing':
+            gameStatus = 'Game Started'
+            accentColor = discord.Color.blue()
+        elif data['game_state'] == 'Completed':
+            gameStatus = 'Game Finished'
+            accentColor = discord.Color.green()
+        
+
         if channel:
+            embed = discord.Embed(
+                title=gameStatus,
+                color=accentColor,
+                timestamp=datetime.datetime.utcnow()
+            )
+            embed.set_author(name=data['name'], icon_url=data['cover_art'])
+            embed.set_thumbnail(url=data['cover_art'])
+            channel.send(embed=embed)
             asyncio.run_coroutine_threadsafe(
-                channel.send(f'Received data: {data['message']}'),
+                channel.send(embed=embed),
                 client.loop
             )
     
