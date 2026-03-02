@@ -30,6 +30,9 @@ async def on_ready():
         elif data['game_state'] == 'Completed':
             gameStatus = 'Game Finished'
             accentColor = discord.Color.green()
+        elif data['game_state'] == 'Dropped':
+            gameStatus = 'Game Dropped'
+            accentColor = discord.Color.red()
         
 
         if channel:
@@ -38,8 +41,15 @@ async def on_ready():
                 color=accentColor,
                 timestamp=datetime.datetime.utcnow()
             )
+
             embed.set_author(name=data['name'], icon_url=data['cover_art'])
             embed.set_thumbnail(url=data['cover_art'])
+            if data['game_state'] == 'Completed':
+                embed.add_field(
+                    name='Rating',
+                    value=f"{data['user_rating']} / 100",
+                )
+
             channel.send(embed=embed)
             asyncio.run_coroutine_threadsafe(
                 channel.send(embed=embed),
