@@ -33,6 +33,9 @@ async def on_ready():
         elif data['game_state'] == 'Dropped':
             gameStatus = 'Game Dropped'
             accentColor = discord.Color.red()
+        elif data['game_state'] == 'Rating Changed':
+            gameStatus = 'Rating Changed'
+            accentColor = discord.Color.yellow()
         
 
         if channel:
@@ -44,7 +47,7 @@ async def on_ready():
 
             embed.set_author(name=data['name'], icon_url=data['cover_art'])
             embed.set_thumbnail(url=data['cover_art'])
-            if data['game_state'] == 'Completed':
+            if data['game_state'] == 'Completed' or data['game_state'] == 'Rating Changed':
                 embed.add_field(
                     name='Rating',
                     value=f"{data['user_rating']} / 100",
