@@ -49,8 +49,8 @@ async def on_ready():
             embed.set_thumbnail(url=data['cover_art'])
             if data['game_state'] == 'Completed' or data['game_state'] == 'Rating Changed':
                 embed.add_field(
-                    name='Rating',
-                    value=f"{data['user_rating']} / 100",
+                    name='Rating Updated',
+                    value=f"{data['old_rating']} / 100 --> {data['user_rating']} / 100",
                 )
 
             channel.send(embed=embed)
