@@ -47,7 +47,7 @@ async def on_ready():
 
             embed.set_author(name=data['name'], icon_url=data['cover_art'])
             embed.set_thumbnail(url=data['cover_art'])
-            if data['game_state'] == 'Completed' or data['game_state'] == 'Rating Changed':
+            if data['game_state'] == 'Rating Changed':
                 embed.add_field(
                     name='Rating Updated',
                     value=f"{data['old_rating']} / 100 --> {data['user_rating']} / 100",
